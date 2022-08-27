@@ -2,32 +2,25 @@ from requests import get
 from bs4 import BeautifulSoup as soup
 
 class ProductsParser:
-    def __init__(self, tree, schema):
-        self.tree = tree
+    def __init__(self, card, schema):
+        self.card = card
         self.schema = schema
 
     def parse(self):
-        return { 'title': self.getTitle(),'img':self.getImg(),'price':self.getPrice()}
+        return { 'title': self.getTitle(),'price':self.getPrice()}
 
     def getTitle(self):
         
         try:
-            title = self.tree.select_one(self.schema['title'])
-            return title.string
-        except:
-            return None
-
-    
-    def getImg(self):
-        try:
-            img = self.tree.select_one(self.schema['img'])
-            return img['title']
+            title = self.card.select_one(self.schema['title'])
+            
+            return title.get_text()
         except:
             return None
 
     def getPrice(self):
         try:
-            price = self.tree.select_one(self.schema['price'])
+            price = self.card.select_one(self.schema['price'])
             return price.string
         except:
             return None
@@ -58,11 +51,10 @@ def scrap(schema):
         html = getHtml(getNext(parser, schema))
 
 mercadolibre = {
-    'url': 'https://computacion.mercadolibre.com.co/portatiles/_Desde_101',
-    'discriminator': 'li.results-item',
-    'title': 'div > h2 > a > span',
-    'price' : 'span.price__fraction ',
-    'img':'div > div > a > img',
-    'next':'ul > li.andes-pagination__button.andes-pagination__button--next > a'
+    'url': 'https://carros.mercadolibre.com.co/carros_Desde_49_NoIndex_True',
+    'discriminator': 'li.ui-search-layout__item',
+    'title': 'div.ui-search-item__group--title > h2',
+    'price' : 'span.price-tag-fraction',
+    'next':'ul > li.andes-pagination__button--next > a'
 }
 scrap(mercadolibre)
